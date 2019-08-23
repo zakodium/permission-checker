@@ -5,11 +5,11 @@ import PermissionsChecker from '..';
 const permission = 'project:read:4';
 
 test('permission ok', () => {
-  expect(new PermissionsChecker(permission, permission).isAllowed()).toBe(true);
+  expect(new PermissionsChecker(permission).isAllowed(permission)).toBe(true);
 });
 
 test('permission ko', () => {
-  expect(new PermissionsChecker(permission, 'project:read:5').isAllowed()).toBe(
+  expect(new PermissionsChecker('project:read:5').isAllowed(permission)).toBe(
     false,
   );
 });
@@ -18,20 +18,19 @@ const permissions = ['project:read:4', 'project:write:4'];
 
 test('permissions ok', () => {
   expect(
-    new PermissionsChecker(permissions, [
+    new PermissionsChecker([
       'project:read:4',
       'project:write:4',
       'project:write:5',
-    ]).isAllowed(),
+    ]).isAllowed(permissions),
   ).toBe(true);
 });
 
 test('permissions ko', () => {
   expect(
-    new PermissionsChecker(permissions, [
-      'project:read:4',
-      'project:read:5',
-    ]).isAllowed(),
+    new PermissionsChecker(['project:read:4', 'project:read:5']).isAllowed(
+      permissions,
+    ),
   ).toBe(false);
 });
 
@@ -41,13 +40,13 @@ const wildcardPermission = 'project:read:*';
 
 test('permission with wildcard ok', () => {
   expect(
-    new PermissionsChecker('project:read:4', wildcardPermission).isAllowed(),
+    new PermissionsChecker(wildcardPermission).isAllowed('project:read:4'),
   ).toBe(true);
 });
 
 test('permission with wildcard ko', () => {
   expect(
-    new PermissionsChecker('project:write:4', wildcardPermission).isAllowed(),
+    new PermissionsChecker(wildcardPermission).isAllowed('project:write:4'),
   ).toBe(false);
 });
 
@@ -55,18 +54,15 @@ const wildcardPermissions = ['project:*:4', 'project:read:*'];
 
 test('permissions with wildcard ok', () => {
   expect(
-    new PermissionsChecker(
-      ['project:read:4', 'project:write:4'],
-      wildcardPermissions,
-    ).isAllowed(),
+    new PermissionsChecker(wildcardPermissions).isAllowed([
+      'project:read:4',
+      'project:write:4',
+    ]),
   ).toBe(true);
 });
 
 test('permissions with wildcard ko', () => {
   expect(
-    new PermissionsChecker(
-      ['project:write:5'],
-      wildcardPermissions,
-    ).isAllowed(),
+    new PermissionsChecker(wildcardPermissions).isAllowed(['project:write:5']),
   ).toBe(false);
 });

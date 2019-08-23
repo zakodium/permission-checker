@@ -1,29 +1,24 @@
 export default class PermissionsChecker {
-  constructor(requiredPermissions, requesterPermissions) {
-    this._requiredPermissions =
-      typeof requiredPermissions === 'string'
-        ? [requiredPermissions]
-        : requiredPermissions;
+  constructor(requesterPermissions) {
     this._requesterPermissions =
       typeof requesterPermissions === 'string'
         ? [requesterPermissions]
         : requesterPermissions;
-
-    this._allowed = null;
   }
 
-  _computePermission() {
-    const requiredPermissions = this._requiredPermissions.map(
-      (requiredPermission) => {
-        const permParts = requiredPermission.split(':');
-        return {
-          slug: requiredPermission,
-          entity: permParts[0] || null,
-          action: permParts[1] || null,
-          identifier: permParts[2] || null,
-        };
-      },
-    );
+  isAllowed(requiredPermissions) {
+    const requiredPerms = (typeof requiredPermissions === 'string'
+      ? [requiredPermissions]
+      : requiredPermissions
+    ).map((requiredPermission) => {
+      const permParts = requiredPermission.split(':');
+      return {
+        slug: requiredPermission,
+        entity: permParts[0] || null,
+        action: permParts[1] || null,
+        identifier: permParts[2] || null,
+      };
+    });
 
     const requesterPermissions = this._requesterPermissions.map(
       (requesterPermission) => {
@@ -37,7 +32,7 @@ export default class PermissionsChecker {
       },
     );
 
-    const fulfilledPermissions = requiredPermissions.map(
+    const fulfilledPermissions = requiredPerms.map(
       (requiredPermission) =>
         requesterPermissions.filter(
           (requesterPermission) =>
@@ -49,21 +44,8 @@ export default class PermissionsChecker {
               requesterPermission.identifier === '*'),
         ).length > 0,
     );
-    this._allowed = fulfilledPermissions.every(
+    return fulfilledPermissions.every(
       (fulfilledPermission) => fulfilledPermission === true,
     );
-
-    /*
-    // si toutes les permissions requises sont ok
-      // OK
-    // sinon
-      // KO
-      */
-    return this;
-  }
-
-  isAllowed() {
-    if (this._allowed === null) this._computePermission();
-    return this._allowed;
   }
 }
