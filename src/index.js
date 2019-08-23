@@ -58,4 +58,3 @@ export default class PermissionsChecker {
     };
   }
 }
-new PermissionsChecker('yolo:read').isAllowed('yolo:write');
