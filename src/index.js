@@ -7,6 +7,14 @@ export default class PermissionsChecker {
   }
 
   isAllowed(requiredPermissions) {
+    // Fast return
+    if (this._requesterPermissions.length === 0 && requiredPermissions > 0) {
+      return false;
+    }
+    if (requiredPermissions.length === 0) {
+      return true;
+    }
+
     const requiredPerms = (typeof requiredPermissions === 'string'
       ? [requiredPermissions]
       : requiredPermissions
