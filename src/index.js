@@ -7,7 +7,7 @@ export default class PermissionsChecker {
   }
 
   isAllowed(requiredPermissions) {
-    // Fast return
+    // fast returns
     if (this._requesterPermissions.length === 0 && requiredPermissions > 0) {
       return false;
     }
@@ -15,6 +15,7 @@ export default class PermissionsChecker {
       return true;
     }
 
+    // extract parts from slug
     const requiredPerms = (typeof requiredPermissions === 'string'
       ? [requiredPermissions]
       : requiredPermissions
@@ -27,8 +28,7 @@ export default class PermissionsChecker {
         identifier: permParts[2] || null,
       };
     });
-
-    const requesterPermissions = this._requesterPermissions.map(
+    const requesterPerms = this._requesterPermissions.map(
       (requesterPermission) => {
         const permParts = requesterPermission.split(':');
         return {
@@ -40,9 +40,10 @@ export default class PermissionsChecker {
       },
     );
 
+    // compute permissions value
     const fulfilledPermissions = requiredPerms.map(
       (requiredPermission) =>
-        requesterPermissions.filter(
+        requesterPerms.filter(
           (requesterPermission) =>
             (requiredPermission.entity === requesterPermission.entity ||
               requesterPermission.entity === '*') &&
@@ -52,6 +53,8 @@ export default class PermissionsChecker {
               requesterPermission.identifier === '*'),
         ).length > 0,
     );
+
+    // is allowd if every permissions values are true
     return fulfilledPermissions.every(
       (fulfilledPermission) => fulfilledPermission === true,
     );
