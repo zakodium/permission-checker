@@ -1,9 +1,10 @@
+import InvalidPermissionSlug from './errors/InvalidPermissionSlug.js';
+
 export default class PermissionsChecker {
   constructor(requesterPermissions) {
-    this._requesterPermissions =
-      typeof requesterPermissions === 'string'
-        ? [requesterPermissions]
-        : requesterPermissions;
+    this._requesterPermissions = this._ensurePermissionsArray(
+      requesterPermissions,
+    );
   }
 
   isAllowed(requiredPermissions) {
@@ -16,28 +17,11 @@ export default class PermissionsChecker {
     }
 
     // extract parts from slug
-    const requiredPerms = (typeof requiredPermissions === 'string'
-      ? [requiredPermissions]
-      : requiredPermissions
-    ).map((requiredPermission) => {
-      const permParts = requiredPermission.split(':');
-      return {
-        slug: requiredPermission,
-        entity: permParts[0] || null,
-        action: permParts[1] || null,
-        identifier: permParts[2] || null,
-      };
-    });
+    const requiredPerms = this._ensurePermissionsArray(requiredPermissions).map(
+      this._extractPermissionsParts,
+    );
     const requesterPerms = this._requesterPermissions.map(
-      (requesterPermission) => {
-        const permParts = requesterPermission.split(':');
-        return {
-          slug: requesterPermission,
-          entity: permParts[0] || null,
-          action: permParts[1] || null,
-          identifier: permParts[2] || null,
-        };
-      },
+      this._extractPermissionsParts,
     );
 
     // compute permissions value
@@ -59,4 +43,19 @@ export default class PermissionsChecker {
       (fulfilledPermission) => fulfilledPermission === true,
     );
   }
+
+  _ensurePermissionsArray(permissions) {
+    return typeof permissions === 'string' ? [permissions] : permissions;
+  }
+
+  _extractPermissionsParts(permission) {
+    const permParts = permission.split(':');
+    return {
+      slug: permission,
+      entity: permParts[0] || null,
+      action: permParts[1] || null,
+      identifier: permParts[2] || null,
+    };
+  }
 }
+new PermissionsChecker('yolo:read').isAllowed('yolo:write');
