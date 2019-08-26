@@ -50,11 +50,16 @@ export default class PermissionsChecker {
 
   _extractPermissionsParts(permission) {
     const permParts = permission.split(':');
+    if (permParts.length !== 3) {
+      throw new InvalidPermissionSlug(
+        `'${permission}' is not a valid permission slug`,
+      );
+    }
     return {
       slug: permission,
-      entity: permParts[0] || null,
-      action: permParts[1] || null,
-      identifier: permParts[2] || null,
+      entity: permParts[0],
+      action: permParts[1],
+      identifier: permParts[2],
     };
   }
 }
