@@ -66,3 +66,19 @@ test('permissions with wildcard ko', () => {
     new PermissionsChecker(wildcardPermissions).isAllowed(['project:write:5']),
   ).toBe(false);
 });
+
+// fast returns
+test('first fast return ko', () => {
+  expect(new PermissionsChecker([]).isAllowed('project:write:5')).toBe(false);
+});
+
+test('second fast return ok', () => {
+  expect(new PermissionsChecker(['project:write:5']).isAllowed()).toBe(true);
+});
+
+// invalid slug
+test('invalid slug ko', () => {
+  expect(() =>
+    new PermissionsChecker(['project:*']).isAllowed('project:write:5'),
+  ).toThrow(`'project:*' is not a valid permission slug`);
+});

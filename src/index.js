@@ -8,16 +8,23 @@ export default class PermissionsChecker {
   }
 
   isAllowed(requiredPermissions) {
+    const arrayRequiredPermissions = this._ensurePermissionsArray(
+      requiredPermissions,
+    );
+
     // fast returns
-    if (this._requesterPermissions.length === 0 && requiredPermissions > 0) {
+    if (
+      this._requesterPermissions.length === 0 &&
+      arrayRequiredPermissions.length > 0
+    ) {
       return false;
     }
-    if (requiredPermissions.length === 0) {
+    if (arrayRequiredPermissions.length === 0) {
       return true;
     }
 
     // extract parts from slug
-    const requiredPerms = this._ensurePermissionsArray(requiredPermissions).map(
+    const requiredPerms = arrayRequiredPermissions.map(
       this._extractPermissionsParts,
     );
     const requesterPerms = this._requesterPermissions.map(
@@ -45,7 +52,11 @@ export default class PermissionsChecker {
   }
 
   _ensurePermissionsArray(permissions) {
-    return typeof permissions === 'string' ? [permissions] : permissions;
+    if (permissions) {
+      return typeof permissions === 'string' ? [permissions] : permissions;
+    } else {
+      return [];
+    }
   }
 
   _extractPermissionsParts(permission) {
