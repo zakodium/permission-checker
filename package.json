@@ -14,7 +14,8 @@
     "prepublishOnly": "rollup -c",
     "test": "npm run test-coverage && npm run eslint",
     "test-coverage": "jest --coverage",
-    "test-only": "jest"
+    "test-only": "jest",
+    "example": "node -r esm examples/api/index.js"
   },
   "repository": {
     "type": "git",

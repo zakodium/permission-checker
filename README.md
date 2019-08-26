@@ -22,6 +22,8 @@ const result = library(args);
 
 ## Example
 
+`$ npm run example`
+OR
 `$ cd examples/api`
 `$ npm i`
 `$ npm run dev`
