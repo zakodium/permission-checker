@@ -20,6 +20,12 @@ const result = library(args);
 // result is ...
 ```
 
+## Example
+
+`$ cd examples/api`
+`$ npm i`
+`$ npm run dev`
+
 ## [API Documentation](https://zakodium.github.io/permission-checker/)
 
 ## License
