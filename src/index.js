@@ -51,6 +51,21 @@ export default class PermissionsChecker {
     );
   }
 
+  getAccessibleRessources(entity, action) {
+    const requesterPerms = this._requesterPermissions.map(
+      this._extractPermissionsParts,
+    );
+    return requesterPerms
+      .filter(
+        (requesterPermission) =>
+          (requesterPermission.entity === entity ||
+            requesterPermission.entity === '*') &&
+          (requesterPermission.action === action ||
+            requesterPermission.action === '*'),
+      )
+      .map((requesterPermission) => requesterPermission.identifier);
+  }
+
   _ensurePermissionsArray(permissions) {
     if (permissions) {
       return typeof permissions === 'string' ? [permissions] : permissions;
