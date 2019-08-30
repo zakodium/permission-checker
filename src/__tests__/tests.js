@@ -67,6 +67,18 @@ test('permissions with wildcard ko', () => {
   ).toBe(false);
 });
 
+// every entities
+test('permission on all entities ok', () => {
+  expect(new PermissionsChecker('*:read:*').isAllowed(['project:read:5'])).toBe(
+    true,
+  );
+});
+test('permission on all entities ko', () => {
+  expect(
+    new PermissionsChecker('*:read:*').isAllowed(['project:write:5']),
+  ).toBe(false);
+});
+
 // fast returns
 test('first fast return ko', () => {
   expect(new PermissionsChecker([]).isAllowed('project:write:5')).toBe(false);
